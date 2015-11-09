@@ -1,4 +1,4 @@
-This scraper scrapes unomaha.edu/class-search, and outputs the courses in json.
+Scrapes course data from unomaha.edu/class-search and outputs the courses to json.
 
 ## Setup instructions
 (1) Setup a virtualenv to install the dependencies:

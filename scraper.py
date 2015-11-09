@@ -28,8 +28,6 @@ from BeautifulSoup import BeautifulSoup
 BASE_URL = "http://www.unomaha.edu/registrar/students/before-you-enroll/class-search/"
 
 terms = [1158]
-with open("data/terms.json") as f:
-    terms = json.loads(f.readline())
 
 def get_college_data((college, term)):
     """Returns a dictionary containing all classes within college and term"""
@@ -125,13 +123,15 @@ def _main():
         terms = [terms[-1]]
 
     if args['--url']:
-        global URL
-        URL = args['--url']
+        global BASE_URL
+        BASE_URL = args['--url']
 
     if args['--verbose']:
         logging.basicConfig(level=logging.INFO)
     else:
         logging.basicConfig(level=logging.WARNING)
+
+    terms = get_terms()
 
     term_data = get_full_term_listing(college)
 
@@ -145,6 +145,11 @@ def _main():
 
 def get_colleges(term):
     return [x['value'] for x in requests.get("{}subjects.load.php?term={}".format(BASE_URL, term)).json()]
+
+def get_terms():
+    page = requests.get(BASE_URL)
+    soup = BeautifulSoup(page.text)
+    return [int(dict(x.attrs)['value']) for x in soup.find("select").findAll("option")]
 
 if __name__ == "__main__":
     _main()
